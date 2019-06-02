@@ -40,9 +40,11 @@ console.log(gameState);
 var pokemonEl = document.querySelector('.select-screen').querySelectorAll('.character');
 console.log(pokemonEl);
 var battleScreenEl = document.getElementById('battle-screen');
-var i = 0;
+var attackBtnsEl = document.getElementById('battle-screen').querySelectorAll('.attack');
+console.log(attackBtnsEl);
 
 // this is the initial loop
+var i = 0;
 while(i < pokemonEl.length) {
  // add function to all characters on the screen select
  pokemonEl[i].onclick = function() {
@@ -62,18 +64,18 @@ while(i < pokemonEl.length) {
   battleScreenEl.classList.toggle('active');
 
   // select data from current user pokemon
-  var currentPokemon = pokemonDB.filter(function(pokemon) {
+  gameState.currentPokemon = pokemonDB.filter(function(pokemon) {
    return pokemon.name == gameState.userPokemon
   });
-  player1Img[0].src = currentPokemon[0].img;
+  player1Img[0].src = gameState.currentPokemon[0].img;
 
   // select data from current cpu pokemon
-  var currentRivalPokemon = pokemonDB.filter(function(pokemon) {
+  gameState.currentRivalPokemon = pokemonDB.filter(function(pokemon) {
    return pokemon.name == gameState.rivalPokemon
   });
-  player2Img[0].src = currentRivalPokemon[0].img;
+  player2Img[0].src = gameState.currentRivalPokemon[0].img;
 
-  console.log(currentPokemon);
+  console.log(calculateInitialHealth(gameState.currentPokemon));
 
   // user choose attack 
 
@@ -96,6 +98,50 @@ while(i < pokemonEl.length) {
  };
  i++
 };
+
+var a = 0;
+while (a < attackBtnsEl.length) {
+ attackBtnsEl[a].onclick = function() {
+  var attackName = this.dataset.attack;
+  gameState.currentUserAttack = attackName;
+
+  play(attackName, cpuAttack());
+ }
+ a++
+};
+
+var cpuAttack = function() {
+ var attacks = ['rock', 'paper', 'scissors']
+ return attacks[randomNumber(0, 3)]
+}
+
+var calculateInitialHealth = function(user) {
+ return ((0.20 * Math.sqrt(user[0].level)) * user[0].defense) * user[0].hp
+}
+
+var play = function(userAttack, cpuAttack) {
+ switch(userAttack) {
+  case 'rock':
+   if(cpuAttack == 'paper') {
+    console.log('paper killed rock')
+   }
+   if(cpuAttack == 'scissors') {
+    console.log('rock killed scissors')
+   }
+   if(cpuAttack == 'rock') {
+    console.log('its a draw')
+   }
+
+   console.log(userAttack)
+   break;
+  case 'paper':
+   console.log(userAttack)
+   break;
+  case 'scissors':
+   console.log(userAttack)
+   break;
+ }
+}
 
 var randomNumber = function(min, max) {
  return Math.floor(Math.random() * (max - min)) + min;
